@@ -2,7 +2,11 @@ version: '3'
 
 services:
   mysql_db:
-    image: mysql:5.7
+    image: mysql_db
+    build:
+      context: ./database
+      dockerfile: Dockerfile
+    container_name: mysql
     environment:
       MYSQL_ROOT_PASSWORD: 'password'
       MYSQL_DATABASE: 'zssn_db'
@@ -11,9 +15,6 @@ services:
       - '3306:3306'
     networks:
       - app-tier
-    volumes: 
-    - ./docker/mysql/data:/var/lib/mysql:rw
-    - ./database/zssn_db.sql:/docker-entrypoint-initdb.d/zssn_db.sql:ro
 
   python_app:
     build:
