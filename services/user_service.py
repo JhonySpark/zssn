@@ -83,7 +83,7 @@ def insert_survivor_item(item, survivorId):
         conn.commit()
         return True
     except Exception as e:
-        print('Error 65: ', e)
+        print('Error: ', e)
     finally:
         if(conn):
             cursor.close()
@@ -99,7 +99,7 @@ def report_infected_survivor(survivorId):
         conn.commit()
         return jsonify({'message': 'Survivor reported as infected!'}), 200
     except Exception as e:
-        print('Error 80: ', e)
+        print('Error: ', e)
     finally:
         if(conn):
             cursor.close()
@@ -124,8 +124,6 @@ def trade_service(data):
         survivor1_inventory_query = 'SELECT * FROM inventory INNER JOIN items ON inventory.item_id = items.id WHERE survivor_id = %s AND item_id = %s' 
         cursor.execute(survivor1_inventory_query, (data['survivor1_id'], survivor1_item['id']))
         survivor1_inventory_item = cursor.fetchone()
-        
-        print(survivor1_inventory_item)
 
         # get suvivor 2 data
         survivor2_query = 'SELECT * FROM survivor WHERE id = %s'
@@ -136,8 +134,6 @@ def trade_service(data):
         survivor2_inventory_query = 'SELECT * FROM inventory INNER JOIN items ON inventory.item_id = items.id WHERE survivor_id = %s AND item_id = %s'
         cursor.execute(survivor2_inventory_query, (data['survivor2_id'], survivor2_item['id']))
         survivor2_inventory_item = cursor.fetchone()
-
-        print(survivor2_inventory_item)
         
         # Check if there is infected survivors
         if(survivor1[5] >= 3 or survivor2[5] >= 3):
