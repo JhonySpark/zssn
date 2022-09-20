@@ -1,6 +1,5 @@
-import pymysql
+from services.user_service import *
 from app import app
-from config import mysql
 from flask import jsonify
 from flask import flash, request
 
@@ -13,8 +12,11 @@ def main():
 def create_survivor():
     try:        
         _json = request.json
+        new_survivor(_json)   
+        return jsonify({'message': 'Survivor added successfully!'})   
     except Exception as e:
-        print(e)   
+        print(e)
+        return jsonify({'message': 'Error adding survivor!'})
      
 # update survivor location on the system
 @app.route('/update_user_location/<int:user_id>', methods=['PUT'])
