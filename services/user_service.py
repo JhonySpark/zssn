@@ -47,6 +47,17 @@ def set_survivor_items(item, survivorId):
     try:
         conn = mysql.connect()
         cursor = conn.cursor()
+        
+         # check if item exists and get data
+        survivor_query = 'SELECT * FROM survivor WHERE id = %s'
+        cursor.execute(survivor_query, survivorId)
+        survivor = cursor.fetchone()
+
+        # check if survivor is infected
+        if(survivor[5] >= 3):
+            return False
+        
+        #update inventory item
         query = 'UPDATE inventory SET amount = %s WHERE survivor_id = %s AND item_id = %s'
         cursor.execute(query, (item['amount'], survivorId, item['id']))
         conn.commit()
