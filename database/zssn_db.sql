@@ -27,7 +27,6 @@ CREATE TABLE `inventory` (
   `item_id` int(11) NOT NULL,
   `amount` int(11) NOT NULL,
   `survivor_id` int(11) NOT NULL,
-  `bag_index` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `inventory_fk0` (`item_id`),
   KEY `inventory_fk1` (`survivor_id`),
