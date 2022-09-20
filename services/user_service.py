@@ -19,9 +19,10 @@ def new_survivor(data):
             for item in data['items']:
                 insert_survivor_item(item, cursor.lastrowid)
 
-        return True
+        return jsonify({'message': 'Survivor added successfully!'}), 200
     except Exception as e:
-        print('Error 20: ', e)
+        print(e)
+        return jsonify({'message': 'Error adding survivor!'}), 500
     finally:
         if(conn):
             cursor.close()
@@ -35,9 +36,10 @@ def set_survivor_location(data, survivorId):
         query = 'UPDATE survivor SET location = POINT(%s, %s) WHERE id = %s'
         cursor.execute(query, (data['latitude'], data['longitude'], survivorId))
         conn.commit()
-        return True
+        return jsonify({'message': 'Survivor location updated!'}), 200
     except Exception as e:
-        print('Error 35: ', e)
+        print('Error: ', e)
+        return jsonify({'message': 'Error updating survivor location!'}), 500
     finally:
         if(conn):
             cursor.close()
@@ -56,15 +58,16 @@ def set_survivor_items(item, survivorId):
 
         # check if survivor is infected
         if(survivor[5] >= 3):
-            return False
+            return jsonify({'message': 'Survivor is infected, access denied!'}), 400
         
         #update inventory item
         query = 'UPDATE inventory SET amount = %s WHERE survivor_id = %s AND item_id = %s'
         cursor.execute(query, (item['amount'], survivorId, item['id']))
         conn.commit()
-        return True
+        return jsonify({'message': 'Survivor inventory updated!'}), 200
     except Exception as e:
-        print('Error 50: ', e)
+        print('Error: ', e)
+        return jsonify({'message': 'Error updating survivor inventory!'}), 500
     finally:
         if(conn):
             cursor.close()
@@ -94,7 +97,7 @@ def report_infected_survivor(survivorId):
         query = 'UPDATE survivor SET infected = infected + %s WHERE id = %s'
         cursor.execute(query, ('1', survivorId))
         conn.commit()
-        return True
+        return jsonify({'message': 'Survivor reported as infected!'}), 200
     except Exception as e:
         print('Error 80: ', e)
     finally:
@@ -171,8 +174,8 @@ def trade_service(data):
         conn.commit()
         return jsonify({'message': 'Trade completed'}), 200
     except Exception as e:
-        print('Error 80: ', e)
-        return jsonify({'message': 'Error: ' + str(e)}), 400
+        print('Error: ', e)
+        return jsonify({'message': 'Error: ' + str(e)}), 500
     finally:
         if(conn):
             cursor.close()

@@ -9,61 +9,33 @@ def main():
 
 # function to create a new survivor
 @app.route('/add_user', methods=['POST'])
-def create_survivor():
-    try:        
-        _json = request.json
-        new_survivor(_json)   
-        return jsonify({'message': 'Survivor added successfully!'})   
-    except Exception as e:
-        print(e)
-        return jsonify({'message': 'Error adding survivor!'})
+def create_survivor():      
+    _json = request.json
+    return new_survivor(_json)        
      
 # update survivor location on the system
 @app.route('/update_user_location/<int:survivor_id>', methods=['PUT'])
 def update_survivor_location(survivor_id):
-    try:        
-        _json = request.json
-        set_survivor_location(_json, survivor_id)
-        return jsonify({'message': 'Survivor location updated!'})   
-    except Exception as e:
-        print(e)
-        return jsonify({'message': 'Error updating survivor location!'})
-      
+    _json = request.json
+    return set_survivor_location(_json, survivor_id)
+           
 # report infected survivor
 @app.route('/report_infected/<int:survivor_id>', methods=['PUT'])
 def report_infected_user(survivor_id):
-    try:        
-        report_infected_survivor(survivor_id)
-        return jsonify({'message': 'Survivor reported as infected!'})
-    except Exception as e:
-        print(e)   
-        return jsonify({'message': 'Error reporting survivor as infected!'})
+    return report_infected_survivor(survivor_id)
      
 # update survivor inventory items
 @app.route('/update_user_inventory/<int:survivor_id>', methods=['PUT'])
 def update_survivor_items(survivor_id):
-    try:        
-        _json = request.json
-        done = set_survivor_items(_json, survivor_id)
-        if(done):
-            return jsonify({'message': 'Survivor inventory updated!'})
-        else:
-            return jsonify({'message': 'Survivor is infected, access denied!'})
-    except Exception as e:
-        print(e)
-        return jsonify({'message': 'Error updating survivor inventory!'})  
-     
+    _json = request.json
+    return set_survivor_items(_json, survivor_id)
+
 # function to trade items between survivors
 @app.route('/trade/', methods=['POST'])
-def trade_controller():
-    try:        
-        _json = request.json
-        return trade_service(_json)
-    except Exception as e:
-        print(e)   
-        return jsonify({'message': 'Error reporting survivor as infected!'})
+def trade_controller():      
+    _json = request.json
+    return trade_service(_json)  
      
-
 # function to get system report
 @app.route('/report', methods=['GET'])
 def system_report():
