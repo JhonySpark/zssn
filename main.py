@@ -54,12 +54,15 @@ def update_survivor_items(survivor_id):
         return jsonify({'message': 'Error updating survivor inventory!'})  
      
 # function to trade items between survivors
-@app.route('/trade', methods=['POST'])
-def trade():
+@app.route('/trade/', methods=['POST'])
+def trade_controller():
     try:        
         _json = request.json
+        return trade_service(_json)
     except Exception as e:
         print(e)   
+        return jsonify({'message': 'Error reporting survivor as infected!'})
+     
 
 # function to get system report
 @app.route('/report', methods=['GET'])

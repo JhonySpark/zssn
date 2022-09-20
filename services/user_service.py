@@ -1,4 +1,5 @@
 from database.config import mysql
+from flask import jsonify
 
 # Service to add new survivor to database
 def new_survivor(data):
@@ -96,6 +97,82 @@ def report_infected_survivor(survivorId):
         return True
     except Exception as e:
         print('Error 80: ', e)
+    finally:
+        if(conn):
+            cursor.close()
+            conn.close()
+
+# the trade function
+def trade_service(data):
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor()
+
+        # items in table to trade
+        survivor1_item = data['survivor1_item']
+        survivor2_item = data['survivor2_item']
+
+        # get suvivor 1 data
+        survivor1_query = 'SELECT * FROM survivor WHERE id = %s'
+        cursor.execute(survivor1_query, data['survivor1_id'])
+        survivor1 = cursor.fetchone()
+
+        # get survivor 1 inventory
+        survivor1_inventory_query = 'SELECT * FROM inventory INNER JOIN items ON inventory.item_id = items.id WHERE survivor_id = %s AND item_id = %s' 
+        cursor.execute(survivor1_inventory_query, (data['survivor1_id'], survivor1_item['id']))
+        survivor1_inventory_item = cursor.fetchone()
+        
+        print(survivor1_inventory_item)
+
+        # get suvivor 2 data
+        survivor2_query = 'SELECT * FROM survivor WHERE id = %s'
+        cursor.execute(survivor2_query, data['survivor2_id'])
+        survivor2 = cursor.fetchone()
+
+        # get survivor 2 inventory
+        survivor2_inventory_query = 'SELECT * FROM inventory INNER JOIN items ON inventory.item_id = items.id WHERE survivor_id = %s AND item_id = %s'
+        cursor.execute(survivor2_inventory_query, (data['survivor2_id'], survivor2_item['id']))
+        survivor2_inventory_item = cursor.fetchone()
+
+        print(survivor2_inventory_item)
+        
+        # Check if there is infected survivors
+        if(survivor1[5] >= 3 or survivor2[5] >= 3):
+            return jsonify({'message': 'There is infected survivors in this trade'}), 400
+
+        # Check if survivors have enough items to trade
+        if(survivor1_inventory_item[2] < survivor1_item['amount']):
+            return jsonify({'message': 'Survivor 1 dont have enough items to trade'}), 400
+
+        if(survivor2_inventory_item[2] < survivor2_item['amount']):
+            return jsonify({'message': 'Survivor 2 dont have enough items to trade'}), 400
+        
+        # Check if survivors have enough points to trade
+        points_sum = int(survivor1_item['amount'] * survivor1_inventory_item[6]) + int(survivor2_item['amount'] * survivor2_inventory_item[6])
+        if(points_sum % 2 > 0):
+            return jsonify({'message': 'Trade items value mismatch, the trade must be fair!'}), 400
+
+        # update survivor 1 inventory
+        survivor1_inventory_query = 'UPDATE inventory SET amount = %s WHERE survivor_id = %s AND item_id = %s'
+        cursor.execute(survivor1_inventory_query, (survivor1_inventory_item[2] - survivor1_item['amount'], data['survivor1_id'], survivor1_item['id']))
+
+        # update survivor 2 inventory
+        survivor2_inventory_query = 'UPDATE inventory SET amount = %s WHERE survivor_id = %s AND item_id = %s'
+        cursor.execute(survivor2_inventory_query, (survivor2_inventory_item[2] - survivor2_item['amount'], data['survivor2_id'], survivor2_item['id']))
+
+        # insert survivor 1 new item
+        survivor1_new_item_query = 'UPDATE inventory SET amount = amount + %s WHERE survivor_id = %s AND item_id = %s'
+        cursor.execute(survivor1_new_item_query, (survivor2_item['amount'], data['survivor1_id'], survivor2_item['id']))
+
+        # insert survivor 2 new item
+        survivor2_new_item_query = 'UPDATE inventory SET amount = amount + %s WHERE survivor_id = %s AND item_id = %s'
+        cursor.execute(survivor2_new_item_query, (survivor1_item['amount'], data['survivor2_id'], survivor1_item['id']))
+
+        conn.commit()
+        return jsonify({'message': 'Trade completed'}), 200
+    except Exception as e:
+        print('Error 80: ', e)
+        return jsonify({'message': 'Error: ' + str(e)}), 400
     finally:
         if(conn):
             cursor.close()
