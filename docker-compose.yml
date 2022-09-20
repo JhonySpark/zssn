@@ -11,6 +11,9 @@ services:
       - '3306:3306'
     networks:
       - app-tier
+    volumes: 
+    - ./docker/mysql/data:/var/lib/mysql:rw
+    - ./database/zssn_db.sql:/docker-entrypoint-initdb.d/zssn_db.sql:ro
 
   python_app:
     build:
