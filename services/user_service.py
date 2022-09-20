@@ -73,3 +73,19 @@ def insert_survivor_item(item, survivorId):
         if(conn):
             cursor.close()
             conn.close()
+
+# report infected survivor
+def report_infected_survivor(survivorId):
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        query = 'UPDATE survivor SET infected = infected + %s WHERE id = %s'
+        cursor.execute(query, ('1', survivorId))
+        conn.commit()
+        return True
+    except Exception as e:
+        print('Error 80: ', e)
+    finally:
+        if(conn):
+            cursor.close()
+            conn.close()

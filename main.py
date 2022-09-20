@@ -19,26 +19,28 @@ def create_survivor():
         return jsonify({'message': 'Error adding survivor!'})
      
 # update survivor location on the system
-@app.route('/update_user_location/<int:user_id>', methods=['PUT'])
-def update_survivor_location(user_id):
+@app.route('/update_user_location/<int:survivor_id>', methods=['PUT'])
+def update_survivor_location(survivor_id):
     try:        
         _json = request.json
-        set_survivor_location(_json, user_id)
+        set_survivor_location(_json, survivor_id)
         return jsonify({'message': 'Survivor location updated!'})   
     except Exception as e:
         print(e)
         return jsonify({'message': 'Error updating survivor location!'})
       
 # report infected survivor
-@app.route('/set_infected_user/<int:user_id>', methods=['PUT'])
-def report_infected_survivor():
+@app.route('/report_infected/<int:survivor_id>', methods=['PUT'])
+def report_infected_user(survivor_id):
     try:        
-        _json = request.json
+        report_infected_survivor(survivor_id)
+        return jsonify({'message': 'Survivor reported as infected!'})
     except Exception as e:
         print(e)   
+        return jsonify({'message': 'Error reporting survivor as infected!'})
      
 # update survivor inventory items
-@app.route('/update_user_inventory/<int:user_id>', methods=['PUT'])
+@app.route('/update_user_inventory/<int:survivor_id>', methods=['PUT'])
 def update_survivor_items():
     try:        
         _json = request.json
