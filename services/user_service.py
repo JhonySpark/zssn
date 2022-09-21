@@ -176,3 +176,80 @@ def trade_service(data):
         if(conn):
             cursor.close()
             conn.close()
+
+# generate report
+def report():
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor()
+
+        # get total survivors
+        total_survivors_query = 'SELECT COUNT(*) FROM survivor'
+        cursor.execute(total_survivors_query)
+        total_survivors = cursor.fetchone()
+
+        # get total infected survivors
+        total_infected_survivors_query = 'SELECT COUNT(*) FROM survivor WHERE infected >= 3'
+        cursor.execute(total_infected_survivors_query)
+        total_infected_survivors = cursor.fetchone()
+
+        # get total non infected survivors
+        total_non_infected_survivors_query = 'SELECT COUNT(*) FROM survivor WHERE infected < 3'
+        cursor.execute(total_non_infected_survivors_query)
+        total_non_infected_survivors = cursor.fetchone()
+
+        # get average resources per survivor
+        average_resources_per_survivor_query = 'SELECT AVG(amount) FROM inventory'
+        cursor.execute(average_resources_per_survivor_query)
+        average_resources_per_survivor = cursor.fetchone()
+
+        # get average water per survivor
+        average_water_per_survivor_query = 'SELECT AVG(amount) FROM inventory WHERE item_id = 1'
+        cursor.execute(average_water_per_survivor_query)
+        average_water_per_survivor = cursor.fetchone()
+
+        # get average food per survivor
+        average_food_per_survivor_query = 'SELECT AVG(amount) FROM inventory WHERE item_id = 2'
+        cursor.execute(average_food_per_survivor_query)
+        average_food_per_survivor = cursor.fetchone()
+
+        # get average medicine per survivor
+        average_medicine_per_survivor_query = 'SELECT AVG(amount) FROM inventory WHERE item_id = 3'
+        cursor.execute(average_medicine_per_survivor_query)
+        average_medicine_per_survivor = cursor.fetchone()
+
+        # get average ammo per survivor
+        average_ammo_per_survivor_query = 'SELECT AVG(amount) FROM inventory WHERE item_id = 4'
+        cursor.execute(average_ammo_per_survivor_query)
+        average_ammo_per_survivor = cursor.fetchone()
+
+        # get points lost because of infected survivor
+        points_lost_query = 'SELECT SUM(amount * items.value) FROM inventory INNER JOIN items ON inventory.item_id = items.id WHERE survivor_id IN (SELECT id FROM survivor WHERE infected >= 3)'
+        cursor.execute(points_lost_query)
+        points_lost = cursor.fetchone() or 0
+
+        # percenta calculation
+        def percent_calc(num_a, num_b):
+            return int((num_a / num_b) * 100)
+
+        # get report data
+        report = {
+            'total_survivors': total_survivors[0],
+            'total_infected_survivors': f'{percent_calc(total_infected_survivors[0], total_survivors[0])}%',
+            'total_non_infected_survivors': f'{percent_calc(total_non_infected_survivors[0], total_survivors[0])}%',
+            'average_resources_per_survivor': ('%.2f' % average_resources_per_survivor[0]),
+            'average_water_per_survivor': ('%.2f' % average_water_per_survivor[0]),
+            'average_food_per_survivor': ('%.2f' % average_food_per_survivor[0]),
+            'average_medicine_per_survivor': ('%.2f' % average_medicine_per_survivor[0]),
+            'average_ammo_per_survivor': ('%.2f' % average_ammo_per_survivor[0]),
+            'points_lost': int(points_lost[0])
+        }
+
+        return jsonify(report), 200
+    except Exception as e:
+        print('Error: ', e)
+        return jsonify({'message': 'Error: ' + str(e)}), 500
+    finally:
+        if(conn):
+            cursor.close()
+            conn.close()

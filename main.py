@@ -37,20 +37,13 @@ def trade_controller():
     return trade_service(_json)  
      
 # function to get system report
-@app.route('/report', methods=['GET'])
-def system_report():
-    try:        
-        _json = request.json
-    except Exception as e:
-        print(e)  
-        
+@app.route('/report/', methods=['GET'])
+def system_report():      
+    return report()
+     
 # not found route      
 @app.errorhandler(404)
 def not_found():
-    try:        
-        _json = request.json
-    except Exception as e:
-        print(e)   
-
+    return jsonify({'message': 'Not found'}), 404  
 
 app.run(host='localhost', port=5000)
