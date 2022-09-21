@@ -1,0 +1,77 @@
+
+# Register a new survivor
+POST http://localhost:5000/add_user HTTP/1.1
+content-type: application/json
+
+{
+    "name": "John Doe",
+    "age": "25",
+    "gender": "M",
+    "latitude": "40.7128",
+    "longitude": "-74.0060",
+    "items": [{
+        "id": 1,
+        "amount": 0
+    },{
+        "id": 2,
+        "amount": 0
+    },{
+        "id": 3,
+        "amount": 0
+    },{
+        "id": 4,
+        "amount": 0
+    }]
+}
+
+###
+
+# update survivor location
+PUT http://localhost:5000/update_user_location/22 HTTP/1.1
+content-type: application/json
+
+{
+    "latitude": "-19.922400",
+    "longitude": "-43.947120"
+}
+
+### 
+
+# report infected survivor
+PUT http://localhost:5000/report_infected/22 HTTP/1.1
+content-type: application/json
+
+### 
+
+PUT http://localhost:5000/update_user_inventory/22 HTTP/1.1
+content-type: application/json
+
+{
+    "id": 2,
+    "amount": 1
+}
+
+### 
+
+# trade betweeen survivors
+POST http://localhost:5000/trade/ HTTP/1.1
+content-type: application/json
+
+{
+    "survivor1_id": 22,
+    "survivor1_item":{
+        "id": 4,
+        "amount": 3
+    },
+    "survivor2_id": 23,
+    "survivor2_item":{
+        "id": 2,
+        "amount": 1
+    }
+}
+
+### 
+
+# generate system report
+GET http://localhost:5000/report/ HTTP/1.1
+content-type: application/json
