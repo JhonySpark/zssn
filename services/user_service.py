@@ -1,5 +1,22 @@
-from database.config import mysql
+
 from flask import jsonify
+from app import mysql
+
+# find user 
+def find_survivor(survivorId):
+    try:
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        query = 'SELECT * FROM survivor WHERE id = %s'
+        cursor.execute(query, survivorId)
+        survivor = cursor.fetchone()
+        return survivor
+    except Exception as e:
+        print('Error: ', e)
+    finally:
+        if(conn):
+            cursor.close()
+            conn.close()
 
 # Service to add new survivor to database
 def new_survivor(data):
@@ -33,6 +50,11 @@ def set_survivor_location(data, survivorId):
     try:
         conn = mysql.connect()
         cursor = conn.cursor()
+
+        survivor = find_survivor(survivorId)
+        if not survivor:
+            return jsonify({'message': 'Survivor not found!'}), 404
+
         query = 'UPDATE survivor SET location = POINT(%s, %s) WHERE id = %s'
         cursor.execute(query, (data['latitude'], data['longitude'], survivorId))
         conn.commit()
@@ -52,9 +74,9 @@ def set_survivor_items(item, survivorId):
         cursor = conn.cursor()
         
          # check if item exists and get data
-        survivor_query = 'SELECT * FROM survivor WHERE id = %s'
-        cursor.execute(survivor_query, survivorId)
-        survivor = cursor.fetchone()
+        survivor = find_survivor(survivorId)
+        if not survivor:
+            return jsonify({'message': 'Survivor not found!'}), 404
 
         # check if survivor is infected
         if(survivor[5] >= 3):
@@ -78,6 +100,12 @@ def insert_survivor_item(item, survivorId):
     try:
         conn = mysql.connect()
         cursor = conn.cursor()
+
+        # check if item exists and get data
+        survivor = find_survivor(survivorId)
+        if not survivor:
+            return jsonify({'message': 'Survivor not found!'}), 404
+
         query = 'REPLACE INTO inventory (survivor_id, item_id, amount) VALUES (%s, %s, %s)'
         cursor.execute(query, (survivorId, item['id'], item['amount']))
         conn.commit()
@@ -94,6 +122,12 @@ def report_infected_survivor(survivorId):
     try:
         conn = mysql.connect()
         cursor = conn.cursor()
+
+        # check if item exists and get data
+        survivor = find_survivor(survivorId)
+        if not survivor:
+            return jsonify({'message': 'Survivor not found!'}), 404
+
         query = 'UPDATE survivor SET infected = infected + %s WHERE id = %s'
         cursor.execute(query, ('1', survivorId))
         conn.commit()
@@ -116,9 +150,9 @@ def trade_service(data):
         survivor2_item = data['survivor2_item']
 
         # get suvivor 1 data
-        survivor1_query = 'SELECT * FROM survivor WHERE id = %s'
-        cursor.execute(survivor1_query, data['survivor1_id'])
-        survivor1 = cursor.fetchone()
+        survivor1 = find_survivor(data['survivor1_id'])
+        if not survivor1:
+            return jsonify({'message': 'Survivor 1 not found!'}), 404
 
         # get survivor 1 inventory
         survivor1_inventory_query = 'SELECT * FROM inventory INNER JOIN items ON inventory.item_id = items.id WHERE survivor_id = %s AND item_id = %s' 
@@ -126,10 +160,10 @@ def trade_service(data):
         survivor1_inventory_item = cursor.fetchone()
 
         # get suvivor 2 data
-        survivor2_query = 'SELECT * FROM survivor WHERE id = %s'
-        cursor.execute(survivor2_query, data['survivor2_id'])
-        survivor2 = cursor.fetchone()
-
+        survivor2 = find_survivor(data['survivor2_id'])
+        if not survivor2:
+            return jsonify({'message': 'Survivor 2 not found!'}), 404
+        
         # get survivor 2 inventory
         survivor2_inventory_query = 'SELECT * FROM inventory INNER JOIN items ON inventory.item_id = items.id WHERE survivor_id = %s AND item_id = %s'
         cursor.execute(survivor2_inventory_query, (data['survivor2_id'], survivor2_item['id']))
