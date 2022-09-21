@@ -264,19 +264,21 @@ def report():
 
         # percenta calculation
         def percent_calc(num_a, num_b):
+            if(not num_a or not num_b):
+                return 0
             return int((num_a / num_b) * 100)
 
         # get report data
         report = {
             'total_survivors': total_survivors[0],
             'total_infected_survivors': f'{percent_calc(total_infected_survivors[0], total_survivors[0])}%',
-            'total_non_infected_survivors': f'{percent_calc(total_non_infected_survivors[0], total_survivors[0])}%',
+            'total_non_infected_survivors': f'{percent_calc(total_non_infected_survivors[0], total_survivors[0]) }%',
             'average_resources_per_survivor': ('%.2f' % average_resources_per_survivor[0]),
             'average_water_per_survivor': ('%.2f' % average_water_per_survivor[0]),
-            'average_food_per_survivor': ('%.2f' % average_food_per_survivor[0]),
+            'average_food_per_survivor': ('%.2f' % average_food_per_survivor[0]) ,
             'average_medicine_per_survivor': ('%.2f' % average_medicine_per_survivor[0]),
             'average_ammo_per_survivor': ('%.2f' % average_ammo_per_survivor[0]),
-            'points_lost': int(points_lost[0])
+            'points_lost': int(points_lost[0]  or 0)
         }
 
         return jsonify(report), 200

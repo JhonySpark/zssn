@@ -73,5 +73,5 @@ content-type: application/json
 ### 
 
 # generate system report
-GET http://localhost:5000/report/ HTTP/1.1
+GET http://localhost:5000/report HTTP/1.1
 content-type: application/json
