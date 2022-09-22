@@ -1,11 +1,11 @@
 from flask import jsonify
-from flask import flash, request
+from flask import flash, request, render_template
 from services.user_service import *
 
 def app_routes(app):
     @app.route('/')
     def main():
-        return "Welcome to the ZSSN Survivors API!"
+        return render_template('index.html')
 
     # function to create a new survivor
     @app.route('/add_user', methods=['POST'])
