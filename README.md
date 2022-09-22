@@ -23,6 +23,9 @@ por questão de tempo não foi possível realizar estas possíbilidades.
 > Executando testes
 `$ pytest`  ( simple like that! :D )
 
+> Link do projeto
+`$ http://localhost:5000/`
+
 ## REST API
 Lista dos endpoints disponíveis na API com exemplo de payloads. 
 Também foi criado um arquivo **api_request.http** na raiz do projeto que pode ser utilizado juntamente com o 
