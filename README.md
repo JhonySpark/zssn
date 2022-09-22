@@ -32,7 +32,9 @@ pluguin **REST Client** do vs code para fazer os testes dos endpoints de forma m
 ## Endpoints
 
 ##### `POST /add_user`
+
 content-type: application/json
+
 `Dados do sobrevivente com os items iniciais`
 
     {
@@ -57,9 +59,13 @@ content-type: application/json
         }]
     }
 
+
 ##### `PUT /update_user_location/:survivor_id`
+
 content-type: application/json
+
 `Coordenadas de geolocalização`
+
 `( inclusive a estrutura da localização está em formato Point com indexação geoespacial)`
 
     {
@@ -67,12 +73,20 @@ content-type: application/json
         "longitude": "-43.947120"
     }
 
+
+
 ##### `PUT /report_infected/:survivor_id`
+
 content-type: application/json
+
 `Payload não é necessário`
 
+
+
 ##### `PUT /update_user_inventory/:survivor_id`
+
 content-type: application/json
+
 `Id do item e quantidade`
     
     {
@@ -80,8 +94,12 @@ content-type: application/json
         "amount": 1
     }
 
+
+
 ##### `POST /trade`
+
 content-type: application/json
+
 `Id do sobrevivente, id do item e quantidade`
     
     {
@@ -98,5 +116,7 @@ content-type: application/json
     }   
     
 ##### `GET /report`
+
 content-type: application/json
+
 `Payload não é necessário`
