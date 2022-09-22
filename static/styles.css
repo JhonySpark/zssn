@@ -63,9 +63,11 @@ body {
 	font-size: 64.5%;
 	font-size: 1.4em;
 	font-family: 'VT323', Courier;
-	height: 100%;
 	margin: 0;
 	padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 h1, h2, h3 h4, h5, h6 { 
@@ -187,10 +189,10 @@ nav.site ul li {
 
 .content { 
 	animation: scroll 3s 1;
-  overflow: hidden;
-	padding: 40px; 
+    overflow: hidden;
 	position: relative;
-	width: 95%;
+	max-width: 1268px;
+	padding: 0 30px;
 }
 
 #logo-v {
