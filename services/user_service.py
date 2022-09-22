@@ -2,6 +2,7 @@
 from flask import jsonify
 from app import mysql
 
+
 # find user 
 def find_survivor(survivorId):
     try:
@@ -260,13 +261,16 @@ def report():
         # get points lost because of infected survivor
         points_lost_query = 'SELECT SUM(amount * items.value) FROM inventory INNER JOIN items ON inventory.item_id = items.id WHERE survivor_id IN (SELECT id FROM survivor WHERE infected >= 3)'
         cursor.execute(points_lost_query)
-        points_lost = cursor.fetchone() or 0
+        points_lost = cursor.fetchone()
 
         # percenta calculation
         def percent_calc(num_a, num_b):
             if(not num_a or not num_b):
                 return 0
             return int((num_a / num_b) * 100)
+        
+        if(not total_survivors[0]):
+            return jsonify({'message': 'No survivors found, so... no data to be shown!'}), 404
 
         # get report data
         report = {
