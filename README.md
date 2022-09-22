@@ -23,8 +23,7 @@ por questão de tempo não foi possível realizar estas possíbilidades.
 > Executando testes
 `$ pytest`  ( simple like that! :D )
 
-> url do serviço
-`http://localhost:5000/`
+> `http://localhost:5000/`
 
 ## REST API
 Lista dos endpoints disponíveis na API com exemplo de payloads. 
